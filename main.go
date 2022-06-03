@@ -131,7 +131,7 @@ func main() {
 	flag.BoolVar(&flagMerge, "merge", false, "if true, merge output into input GeoJSON")
 
 	var flagInterior bool
-	flag.BoolVar(&flagMerge, "interior", false, "if true, restrict covering to fully-contained cells")
+	flag.BoolVar(&flagInterior, "interior", false, "if true, restrict covering to fully-contained cells")
 
 	var flagMin, flagMax int
 	flag.IntVar(&flagMin, "min", 1, "min level of S2 cells desired")
