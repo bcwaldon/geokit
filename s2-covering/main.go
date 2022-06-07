@@ -11,9 +11,6 @@ import (
 	"googlemaps.github.io/maps"
 )
 
-// belongs to brian.waldon@sustglobal.com
-const GOOGLE_MAPS_API_KEY = "AIzaSyDigtazqoqoVnLoTn1MnUf5cXMZn6i6XhU"
-
 type GeoJSONFeatureCollection struct {
 	Type     string           `json:"type"`
 	Features []GeoJSONFeature `json:"features"`
@@ -142,8 +139,8 @@ func EdgesOfCell(c s2.Cell) [][2]float64 {
 	return edges
 }
 
-func Geocode(addr string) (*GeoJSONGeometry, error) {
-	cl, err := maps.NewClient(maps.WithAPIKey(GOOGLE_MAPS_API_KEY))
+func Geocode(apiKey, addr string) (*GeoJSONGeometry, error) {
+	cl, err := maps.NewClient(maps.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, err
 	}
@@ -175,6 +172,9 @@ func main() {
 	var flagAddress string
 	flag.StringVar(&flagAddress, "address", "", "address that should be geocoded to a point")
 
+	var flagGoogleMapsAPIKey string
+	flag.StringVar(&flagGoogleMapsAPIKey, "google-maps-api-key", "", "API key for Google Maps API")
+
 	var flagGeoJSON string
 	flag.StringVar(&flagGeoJSON, "geojson", "", "path to file containing GeoJSON FeatureCollection")
 
@@ -193,7 +193,11 @@ func main() {
 	var inputFeatures []GeoJSONFeature
 
 	if flagAddress != "" {
-		geo, err := Geocode(flagAddress)
+		if flagGoogleMapsAPIKey == "" {
+			panic("must set --google-maps-api-key")
+		}
+
+		geo, err := Geocode(flagGoogleMapsAPIKey, flagAddress)
 		if err != nil {
 			panic(fmt.Sprintf("failed geocoding: %v", err))
 		}
